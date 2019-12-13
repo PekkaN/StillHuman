@@ -14,7 +14,7 @@ public class Cam_Follow_player : MonoBehaviour
     [SerializeField]
     float timeOfset;
 
-    public bool faceRight;
+    public bool faceLeft;
 
     bool isCrouching;
 
@@ -29,7 +29,7 @@ public class Cam_Follow_player : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        faceRight = player.GetComponent<PlayerController_2d>().faceRight;
+        faceLeft = player.GetComponent<PlayerController_2d>().faceLeft;
         isCrouching = player.GetComponent<PlayerController_2d>().isCrouching;
         //Cameras start position
         Vector3 startPos = transform.position;
@@ -41,7 +41,7 @@ public class Cam_Follow_player : MonoBehaviour
         endPos.y += posOffset.y;
         endPos.z = -10;
 
-    if (faceRight){
+    if (faceLeft){
         endPos.x += posOffset.x*-2;
 
 }

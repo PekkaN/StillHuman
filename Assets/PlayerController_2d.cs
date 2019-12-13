@@ -25,27 +25,35 @@ public class PlayerController_2d : MonoBehaviour {
 
      public bool isCrouching;
 
-     public bool faceRight;
+     public bool faceLeft;
 
-// Ground checks set
+// checks set
     [SerializeField]
     Transform groundCheckC;
-      [SerializeField]
+
+    [SerializeField]
     Transform groundCheckL;
-      [SerializeField]
+
+    [SerializeField]
     Transform groundCheckR;
 
-          [SerializeField]
+    [SerializeField]
     Transform grabCheckL;
-        [SerializeField]
+
+    [SerializeField]
     Transform grabCheckR;
 
-              [SerializeField]
+    [SerializeField]
     Transform grabCheckLnowall;
-        [SerializeField]
+
+    [SerializeField]
     Transform grabCheckRnowall;
 
+    [SerializeField]
+    Transform LedgePortL;
 
+    [SerializeField]
+    Transform LedgePortR;
             
 
     // Start is called before the first frame update
@@ -72,6 +80,7 @@ public class PlayerController_2d : MonoBehaviour {
            // Debug.Log("maasa");
         } else {
             isGrounded = false;
+           // Debug.Log("eimaasa");
         }
     
 
@@ -82,7 +91,7 @@ public class PlayerController_2d : MonoBehaviour {
              if (isGrounded)
             animator.Play("Anim_Player_run");
             spriteRenderer.flipX = false;
-            faceRight = false;
+            faceLeft = false;
        
         }
         else if (Input.GetKey("a")  && canMove)
@@ -91,7 +100,7 @@ public class PlayerController_2d : MonoBehaviour {
              if (isGrounded)
             animator.Play("Anim_Player_run");
             spriteRenderer.flipX = true;
-            faceRight = true;
+            faceLeft = true;
         }
 
         else{
@@ -127,15 +136,28 @@ public class PlayerController_2d : MonoBehaviour {
 
     //Ledge grab
 
+    //sane check
+    if ( (Physics2D.Linecast(transform.position, grabCheckR.position, 1<< LayerMask.NameToLayer("Ground"))) && 
+    !(Physics2D.Linecast(transform.position, grabCheckRnowall.position, 1<< LayerMask.NameToLayer("Ground"))) )
+    {
+        Debug.Log ("jee");
+    } else {
+        Debug.Log ("ei mittää");
+    }
 
-    if ((!faceRight) &&
-        (Physics2D.Linecast(transform.position, grabCheckR.position, 1<< LayerMask.NameToLayer("Ground"))) ){// ||
-        //(Physics2D.Linecast(transform.position, grabCheckL.position, 1<< LayerMask.NameToLayer("Ground")))){
+    if ((!faceLeft) && !isGrounded &&
+        (Physics2D.Linecast(transform.position, grabCheckR.position, 1<< LayerMask.NameToLayer("Ground"))) && // ||
+        !(Physics2D.Linecast(transform.position, grabCheckRnowall.position, 1<< LayerMask.NameToLayer("Ground")))  || 
+        (faceLeft) && !isGrounded &&
+        (Physics2D.Linecast(transform.position, grabCheckL.position, 1<< LayerMask.NameToLayer("Ground"))) && // ||
+        !(Physics2D.Linecast(transform.position, grabCheckLnowall.position, 1<< LayerMask.NameToLayer("Ground"))) )
+        {
             animator.Play("Anim_Player_grab");
             rb2d.velocity = new Vector2(0, 0);
+            rb2d.simulated = false; 
             canMove = false;
             hanging = true;
-           // Debug.Log ("grabbbbb");
+           Debug.Log ("grabbbbb");
 
 
         } else {
@@ -145,6 +167,18 @@ public class PlayerController_2d : MonoBehaviour {
 // up look and climb
 
     if ((Input.GetKey ("w")) && hanging){
+
+            if (faceLeft){
+        transform.position = LedgePortL.transform.position;
+
+            }   else    {
+                
+        transform.position = LedgePortR.transform.position;
+
+            }
+            rb2d.simulated = true; 
+            canMove = true;
+            hanging = false;
         Debug.Log ("irti");
 
     }
